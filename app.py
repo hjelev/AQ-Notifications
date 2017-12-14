@@ -6,7 +6,7 @@ from config import *
 from alerts import *
 # todo alerts sev text http://aqicn.org/data-platform/register/
 
-# read air data from joson and get average values
+# read air data from json api and return average values
 def get_air_data(station_id):
 	p1, p2 = [], []
 	with urllib.request.urlopen(api_url + station_id + "/") as url:
