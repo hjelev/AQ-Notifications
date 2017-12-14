@@ -32,7 +32,7 @@ def write_to_csv(p1,p2,timestamp,csv_path):
 		csv_app.writerow([p1,p2,timestamp])
 		
 # Read the last record from csv and get last alert date
-def get_last_row(csv_filename):
+def get_last_row(csv_filename, p1, p2):
 	try:
 		with open(csv_filename, 'r') as f:
 			try:
@@ -41,8 +41,8 @@ def get_last_row(csv_filename):
 				lastrow = None
 			return lastrow[0], lastrow[1], lastrow[2]
 	except FileNotFoundError:
-		write_to_csv("0","0",datetime.today().strftime("%Y-%m-%d %H:%M"),csv_filename)
-		return 0,0,datetime.today().strftime("%Y-%m-%d %H:%M")
+		write_to_csv(p1, p2, datetime.today().strftime("%Y-%m-%d %H:%M"), csv_filename)
+		return p1, p2, datetime.today().strftime("%Y-%m-%d %H:%M")
 		
 #Check if there was an alert today
 def alert_today(adate):	
@@ -91,10 +91,10 @@ def ok_message(ok_value, p1, p2, last_p1, last_p2, station_id, last_alert_date, 
 				Alert Date {today} <br>
 				<p>PM10 = {p1} µg/m³ <br> PM2.5 = {p2} µg/m³ </p>
 				<img src="https://api.luftdaten.info/grafana/render/dashboard-solo/db/single-sensor-view?orgId=1&panelId=2&width=300&height=200&tz=UTC%2B02%3A00&var-node={stationid}">
-				<small>
-				PM10 -  fine particles with a diameter of 10 μm or less
-				<br>
-				PM2.5 -  fine particles with a diameter of 2.5 μm or less
+					<small>
+					PM10 -  fine particles with a diameter of 10 μm or less
+					<br>
+					PM2.5 -  fine particles with a diameter of 2.5 μm or less
 				</small>
 				<br><br>
 				Sensor Location<br>
@@ -102,11 +102,11 @@ def ok_message(ok_value, p1, p2, last_p1, last_p2, station_id, last_alert_date, 
 				<img src="https://maps.googleapis.com/maps/api/staticmap?center={location}&zoom=12&size=300x200&maptype=roadmap&markers=color:blue%7Clabel:S%7C{location}&markers=color:red%7C&key=AIzaSyBmdDFqNyjLOUUwMzXmskur36QdbF4oPao">
 				</a>
 				<br>
-				<small>
-				Latest air pollution was on {lastpolutiondate}<br>
-				<br>
-				PM10 = {last_p1} µg/m³<br>
-				PM2.5 = {last_p2} µg/m³<br>
+					<small>
+					Latest air pollution was on {lastpolutiondate}<br>
+					<br>
+					PM10 = {last_p1} µg/m³<br>
+					PM2.5 = {last_p2} µg/m³<br>
 				</small>
 			</body>
 		</html>
@@ -116,14 +116,12 @@ def ok_message(ok_value, p1, p2, last_p1, last_p2, station_id, last_alert_date, 
 def main(user):
 	#get air pollution data
 	p1, p2, timestamp, location = get_air_data(user['station_id'])
-
-
 	
 	# Get last data from the last record in the csv file for the current user
-	csv_path = os.path.dirname(os.path.realpath(__file__))+"/"+"air_data_" + user['station_id'] +"-"+ user['email'].replace('@', '-')+".csv"
+	csv_path = os.path.dirname(os.path.realpath(__file__))+"/"+csv_data_folder+"/"+"air_data_" + user['station_id'] +"-"+ user['email'].replace('@', '-')+".csv"
 	
 	#read the last record from the csv file
-	last_p1, last_p2, last_alert_date = get_last_row(csv_path)
+	last_p1, last_p2, last_alert_date = get_last_row(csv_path, p1, p2)
 
 #	p2 = 241 # current value of pm2.5 comment used for tests	
 #	last_p2 = 20 # previous value of pm2.5 comment used for tests
@@ -159,6 +157,7 @@ def main(user):
 	
 if __name__ == '__main__':	
 	for user in email_list:
+#		main(user)
 		try:
 			main(user)
 		except:

@@ -1,3 +1,4 @@
 config.py
 *.csv
+air_data/*.csv
 __pycache__
