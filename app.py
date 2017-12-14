@@ -113,13 +113,21 @@ def ok_message(ok_value, p1, p2, last_p1, last_p2, station_id, last_alert_date, 
 		'''.format( map_url = air_map_url+location.replace(",","/"), ok_value=ok_value, today=datetime.today().strftime("%Y-%m-%d %H:%M"), p1=p1, p2=p2, stationid=station_id,lastpolutiondate = last_alert_date, last_p1 = last_p1, last_p2 = last_p2,location=location )	
 	return message
 
+def check_dir(file_path):
+	directory = os.path.dirname(file_path)
+	try:
+		os.stat(directory)
+	except:
+		os.mkdir(directory) 
+	
 def main(user):
 	#get air pollution data
 	p1, p2, timestamp, location = get_air_data(user['station_id'])
 	
 	# Get last data from the last record in the csv file for the current user
 	csv_path = os.path.dirname(os.path.realpath(__file__))+"/"+csv_data_folder+"/"+"air_data_" + user['station_id'] +"-"+ user['email'].replace('@', '-')+".csv"
-	
+	#make sure the folder for the csv files exists
+	check_dir(csv_path)
 	#read the last record from the csv file
 	last_p1, last_p2, last_alert_date = get_last_row(csv_path, p1, p2)
 
@@ -139,7 +147,6 @@ def main(user):
 				write_to_csv(p1,p2,timestamp,csv_path)
 		#check if last alert was positive and send polution alert		
 		elif int(last_p2) < ok_value:
-			#print('Another alert for today')
 			#sends email notifications
 			send_message(alert_message(p1, p2, user['station_id'],location),"Air Pollution Alert!",user['email'])
 			#write new alert record to csv file
