@@ -23,7 +23,7 @@ def get_air_data(station_id):
 					elif readings['value_type'] == 'P2':
 						p2.append(float(readings['value']))						
 	print(p1, p2, location)
-	return int(sum(p1)/len(p1)),  int(sum(p2)/len(p2)),timestamp, location
+	return int(sum(p1)/len(p1)), int(sum(p2)/len(p2)), timestamp, location
 
 # Save the air data to csv
 def write_to_csv(p1,p2,timestamp,csv_path):
@@ -40,6 +40,7 @@ def get_last_row(csv_filename, p1, p2):
 			except IndexError:  # empty file
 				lastrow = None
 			return lastrow[0], lastrow[1], lastrow[2]
+			
 	except FileNotFoundError:
 		write_to_csv(p1, p2, datetime.today().strftime("%Y-%m-%d %H:%M"), csv_filename)
 		return p1, p2, datetime.today().strftime("%Y-%m-%d %H:%M")
@@ -54,7 +55,15 @@ def alert_today(adate):
 #Send email notification
 def send_message(message,subject,recipient):
 	web.sendmail(web.config.smtp_username, recipient, subject, message, headers={'Content-Type':'text/html;charset=utf-8'})
-	print(recipient,subject)
+#	print(recipient,subject)
+
+#make sure the folder exists
+def check_dir(file_path):
+	directory = os.path.dirname(file_path)
+	try:
+		os.stat(directory)
+	except:
+		os.mkdir(directory) 	
 
 def alert_message(p1, p2, station_id,location):
 	#compose email body from air polution alert
@@ -112,13 +121,6 @@ def ok_message(ok_value, p1, p2, last_p1, last_p2, station_id, last_alert_date, 
 		</html>
 		'''.format( map_url = air_map_url+location.replace(",","/"), ok_value=ok_value, today=datetime.today().strftime("%Y-%m-%d %H:%M"), p1=p1, p2=p2, stationid=station_id,lastpolutiondate = last_alert_date, last_p1 = last_p1, last_p2 = last_p2,location=location )	
 	return message
-
-def check_dir(file_path):
-	directory = os.path.dirname(file_path)
-	try:
-		os.stat(directory)
-	except:
-		os.mkdir(directory) 
 	
 def main(user):
 	#get air pollution data
@@ -126,8 +128,10 @@ def main(user):
 	
 	# Get last data from the last record in the csv file for the current user
 	csv_path = os.path.dirname(os.path.realpath(__file__))+"/"+csv_data_folder+"/"+"air_data_" + user['station_id'] +"-"+ user['email'].replace('@', '-')+".csv"
+	
 	#make sure the folder for the csv files exists
 	check_dir(csv_path)
+	
 	#read the last record from the csv file
 	last_p1, last_p2, last_alert_date = get_last_row(csv_path, p1, p2)
 
@@ -140,26 +144,23 @@ def main(user):
 	if p2 > alert_value:
 		#print('We need to send an alert')		
 		# Check if there was an alert today and if its value is  > alert_value - no alert is send
-		if alert_today(parser.parse(last_alert_date)) and int(last_p2) > alert_value:
-			print('There was a high pollution alert today')
-			if p2 > int(last_p2):
-				#record the new higher value
-				write_to_csv(p1,p2,timestamp,csv_path)
+		if int(last_p2) > alert_value and p2 > int(last_p2):
+			#record the new higher value
+			write_to_csv(p1, p2, timestamp, csv_path)
 		#check if last alert was positive and send polution alert		
 		elif int(last_p2) < ok_value:
 			#sends email notifications
-			send_message(alert_message(p1, p2, user['station_id'],location),"Air Pollution Alert!",user['email'])
+			send_message(alert_message(p1, p2, user['station_id'], location), "Air Pollution Alert!", user['email'])
 			#write new alert record to csv file
-			write_to_csv(p1,p2,timestamp,csv_path)
+			write_to_csv(p1, p2, timestamp, csv_path)
 	#check if polution is OK					
 	elif p2 < ok_value:
 		#check if last alert was negative and send clear air alert 
 		if int(last_p2) > ok_value:
 			#we need to send clear air alert
-			#sends email notifications
-			send_message(ok_message(ok_value, p1, p2, last_p1, last_p2, user['station_id'], last_alert_date, location),"Clear Air Alert!",user['email'])
+			send_message(ok_message(ok_value, p1, p2, last_p1, last_p2, user['station_id'], last_alert_date, location), "Clear Air Alert!", user['email'])
 			#write new record to csv file
-			write_to_csv(p1,p2,timestamp,csv_path)
+			write_to_csv(p1, p2, timestamp, csv_path)
 	return
 	
 if __name__ == '__main__':	
@@ -168,4 +169,4 @@ if __name__ == '__main__':
 		try:
 			main(user)
 		except:
-			print("Problem with user: ",user)
+			print("Problem with user: ", user)
