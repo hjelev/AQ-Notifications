@@ -2,8 +2,8 @@ import urllib.request, json, csv, os #, re
 from collections import deque
 from datetime import datetime
 # import configuration variables
-from config import *
 from alerts import *
+from send_email import *
 # todo alerts sev text http://aqicn.org/data-platform/register/
 
 # read air data from json api and return average values
@@ -49,13 +49,6 @@ def get_last_row(csv_filename, p1, p2):
 			)
 		return p1, p2, datetime.today().strftime("%Y-%m-%d %H:%M")
 
-# send email notification
-def send_message(message, subject, recipient):
-	web.sendmail(
-		web.config.smtp_username,
-		recipient, subject, message, 
-		headers = {'Content-Type': 'text/html;charset=utf-8'}
-		)
 
 # make sure the folder exists
 def check_dir(file_path):
@@ -79,8 +72,8 @@ def main(user):
 	# get last data from the last record in the csv file for the current user
 	last_p1, last_p2, last_alert_date = get_last_row(csv_path, p1, p2)
 
-	#p2 = 241 # current value of pm2.5 comment used for tests	
-	#last_p2 = 20 # previous value of pm2.5 comment used for tests
+	#p2 = 2 # current value of pm2.5 comment used for tests	
+	#last_p2 = 202 # previous value of pm2.5 comment used for tests
 	
 	# pollution is high
 	if p2 > alert_value:	
@@ -92,7 +85,7 @@ def main(user):
 		# check if last alert was positive and send polution alert		
 		elif int(last_p2) < ok_value:
 			# sends email notifications
-			send_message(alert_message(p1, p2, user['station_id'], location),
+			send_email(alert_message(p1, p2, user['station_id'], location),
 							"Air Pollution Alert!",
 							user['email']
 							)
@@ -103,7 +96,7 @@ def main(user):
 		# check if last alert was negative and send clear air alert 
 		if int(last_p2) > ok_value:
 			# we need to send clear air alert
-			send_message(ok_message(ok_value, p1, p2,
+			send_email(ok_message(ok_value, p1, p2,
 										last_p1, last_p2,
 										user['station_id'],
 										last_alert_date,
@@ -118,7 +111,7 @@ def main(user):
 	
 if __name__ == '__main__':	
 	for user in email_list:
-#		main(user)
+		#main(user)
 		try:
 			main(user)
 		except:

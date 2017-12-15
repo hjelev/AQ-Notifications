@@ -1,3 +1,6 @@
+from config import *
+from datetime import datetime
+
 def alert_message(p1, p2, station_id, location):
 	#compose email body from air polution alert
 	message = '''
@@ -40,6 +43,7 @@ def ok_message(ok_value, p1, p2, last_p1, last_p2,
 				Alert Date {today} <br>
 				<p>PM10 = {p1} µg/m³ <br> PM2.5 = {p2} µg/m³ </p>
 				<img src="https://api.luftdaten.info/grafana/render/dashboard-solo/db/single-sensor-view?orgId=1&panelId=2&width=300&height=200&tz=UTC%2B02%3A00&var-node={stationid}">
+				<br>
 				<small>
 					PM10 -  fine particles with a diameter of 10 μm or less
 					<br>

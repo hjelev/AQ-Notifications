@@ -1,5 +1,5 @@
 # AQ-Notifications
-Python script to check air pollution data and sent email alerts
+Python script to check air pollution data and sent email alerts.
 
 With this script you can monitor multiple airpolution sensors from http://maps.luftdaten.info and get email alerts.
 There are two type of alerts. The first one is send when the air is polluted and the second when the pollution is over.
