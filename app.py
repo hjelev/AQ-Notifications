@@ -72,8 +72,8 @@ def main(user):
 	# get last data from the last record in the csv file for the current user
 	last_p1, last_p2, last_alert_date = get_last_row(csv_path, p1, p2)
 
-	#p2 = 2 # current value of pm2.5 comment used for tests	
-	#last_p2 = 202 # previous value of pm2.5 comment used for tests
+	#p2 = 200 # current value of pm2.5 comment used for tests	
+	#last_p2 = 20 # previous value of pm2.5 comment used for tests
 	
 	# pollution is high
 	if p2 > alert_value:	

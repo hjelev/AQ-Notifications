@@ -1,5 +1,7 @@
-from config import *
 from datetime import datetime
+
+api_url = "http://api.luftdaten.info/v1/sensor/"
+air_map_url = "http://maps.luftdaten.info/#13/"
 
 def alert_message(p1, p2, station_id, location):
 	#compose email body from air polution alert
