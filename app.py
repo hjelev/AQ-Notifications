@@ -1,7 +1,9 @@
-import urllib.request, json, csv, os #, re
+import urllib.request, json, csv, os , atexit, logging
 from collections import deque
 from datetime import datetime
+
 # import configuration variables
+import config as gl
 from alerts import *
 from send_email import *
 # todo alerts sev text http://aqicn.org/data-platform/register/
@@ -49,7 +51,6 @@ def get_last_row(csv_filename, p1, p2):
 			)
 		return p1, p2, datetime.today().strftime("%Y-%m-%d %H:%M")
 
-
 # make sure the folder exists
 def check_dir(file_path):
 	directory = os.path.dirname(file_path)
@@ -62,41 +63,43 @@ def main(user):
 	# get air pollution data
 	p1, p2, timestamp, location = get_air_data(user['station_id'])	
 	# Build the path to the csv file with previous air data
-	csv_path = (os.path.dirname(os.path.realpath(__file__)) 
-				+ "/" + csv_data_folder 
-				+ "/air_data_" + user['station_id'] +"-" 
-				+ user['email'].replace('@', '-') + ".csv"
+	csv_path = os.path.join(os.path.dirname(os.path.realpath(__file__)) ,
+				gl.config.csv_data_folder ,
+				"air_data_{}-{}.csv".format(user['station_id'], user['email'].replace('@', '-'))
 				)
+
 	# make sure the folder for the csv files exists
 	check_dir(csv_path)
 	# get last data from the last record in the csv file for the current user
 	last_p1, last_p2, last_alert_date = get_last_row(csv_path, p1, p2)
 
-	#p2 = 200 # current value of pm2.5 comment used for tests	
-	#last_p2 = 20 # previous value of pm2.5 comment used for tests
+	#p2 = 20 # current value of pm2.5 comment used for tests	
+	#last_p2 = 722 # previous value of pm2.5 comment used for tests
 	
 	# pollution is high
-	if p2 > alert_value:	
+	if p2 > gl.config.alert_value:	
 		# check if there was an alert today and if its value is > alert_value
 		# - no alert is send
-		if int(last_p2) > alert_value and p2 > int(last_p2):
+		if int(last_p2) > gl.config.alert_value and p2 > int(last_p2):
 			# record the new higher value
 			write_to_csv(p1, p2, timestamp, csv_path)
 		# check if last alert was positive and send polution alert		
-		elif int(last_p2) < ok_value:
+		elif int(last_p2) < gl.config.ok_value:
 			# sends email notifications
 			send_email(alert_message(p1, p2, user['station_id'], location),
 							"Air Pollution Alert!",
 							user['email']
 							)
+			logging.info("- Polluted Air Alert sent to {} ".format(user['email'])
+							+"PM10= {} PM2.5={}".format(p1, p2,))
 			# write new alert record to csv file
 			write_to_csv(p1, p2, timestamp, csv_path)
 	# check if polution is OK					
-	elif p2 < ok_value:
+	elif p2 < gl.config.ok_value:
 		# check if last alert was negative and send clear air alert 
-		if int(last_p2) > ok_value:
+		if int(last_p2) > gl.config.ok_value:
 			# we need to send clear air alert
-			send_email(ok_message(ok_value, p1, p2,
+			send_email(ok_message(gl.config.ok_value, p1, p2,
 										last_p1, last_p2,
 										user['station_id'],
 										last_alert_date,
@@ -105,14 +108,27 @@ def main(user):
 									"Clear Air Alert!",
 									user['email']
 									)
+			logging.info("- Clear Air Alert sent to {} ".format(user['email'])
+							+"PM10= {} PM2.5={}".format(p1, p2,))
 			# write new clear air record to the csv file
 			write_to_csv(p1, p2, timestamp, csv_path)
 	return
-	
-if __name__ == '__main__':	
-	for user in email_list:
+
+if __name__ == '__main__':
+
+	log_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+			gl.config.logs_file_name
+			)		
+	logging.basicConfig(filename=log_path,
+						format='%(asctime)s %(message)s',
+						datefmt='%m/%d/%Y %I:%M:%S %p',
+						level=logging.INFO
+						)
+						
+	for user in gl.config.email_list:
 		#main(user)
 		try:
 			main(user)
 		except:
 			print("Problem with user: ", user)
+			logging.error("Problem with user: " + user['email'])

@@ -41,7 +41,7 @@ def ok_message(ok_value, p1, p2, last_p1, last_p2,
 			</head>
 			<body>
 				<h1>Clear Air Alert!</h1>
-				<h2>The amount of pm2.5 is below {ok_value} µg/m³</h2> <br>
+				<h2>The amount of PM2.5 is below {ok_value} µg/m³</h2> <br>
 				Alert Date {today} <br>
 				<p>PM10 = {p1} µg/m³ <br> PM2.5 = {p2} µg/m³ </p>
 				<img src="https://api.luftdaten.info/grafana/render/dashboard-solo/db/single-sensor-view?orgId=1&panelId=2&width=300&height=200&tz=UTC%2B02%3A00&var-node={stationid}">

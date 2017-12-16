@@ -1,20 +1,20 @@
-#configuration
-alert_value = 100
-ok_value = 50
-api_url = "http://api.luftdaten.info/v1/sensor/"
-air_map_url = "http://maps.luftdaten.info/#13/"
-csv_data_folder = "air_data"
+#config.py
 
-# configure smtp server for sending mail
-smtp_host = 'smtp.gmail.com'
-smtp_port = 587
-smtp_user = 'username@gmail.com'
-smtp_password = 'password'
+class config :
+	alert_value = 100
+	ok_value = 50
+	csv_data_folder = "air_data"
+	logs_file_name = "air_check.log"
+	
+	# configure smtp server for sending mail
+	smtp_host = 'smtp.gmail.com'
+	smtp_port = 587
+	smtp_user = 'username@gmail.com'
+	smtp_password = 'password'
 
-#Notification recipients
-email_list =	[
-					{"email":"username1@gmail.com", "station_id":"5690" },
-					{"email":"username2@gmail.com", "station_id":"5690" },
-					{"email":"username3@gmail.com", "station_id":"6771" },
-					{"email":"username4@gmail.com", "station_id":"6195" },
-				]
+	#Notification recipients
+	email_list =	[
+						{"email":"username@gmail.com", "station_id":"5690" },
+						{"email":"username@gmail.com", "station_id":"5690" },
+						{"email":"username@gmail.com", "station_id":"6771" },
+					]
