@@ -13,8 +13,8 @@ class config :
 	smtp_password = 'password'
 
 	#Notification recipients
-	email_list =	[
-						{"email":"username@gmail.com", "station_id":"5690" },
-						{"email":"username@gmail.com", "station_id":"5690" },
-						{"email":"username@gmail.com", "station_id":"6771" },
-					]
+	email_list = [
+					{"email":"username@gmail.com", "station_id":"5690" },
+					{"email":"username@gmail.com", "station_id":"5690" },
+					{"email":"username@gmail.com", "station_id":"6771" },
+				]
