@@ -1,4 +1,4 @@
-import urllib.request, json, csv, os , logging
+import urllib.request, json, csv, os , logging, smtplib, email.message
 from collections import deque
 from datetime import datetime
 from functools import reduce
@@ -6,7 +6,6 @@ from functools import reduce
 # import configuration variables
 import config as gl
 from alerts import *
-from send_email import *
 
 # read air data from json api and return average values
 def get_air_data(station_id):
@@ -71,7 +70,21 @@ def enable_logging():
 						datefmt='%m/%d/%Y %I:%M:%S %p',
 						level=logging.INFO
 						)
-						
+def send_email(message, subject, recipient):
+	msg = email.message.Message()
+	msg['Subject'] = subject
+	msg['From'] = gl.config.smtp_user
+	msg['To'] = recipient
+	msg.add_header('Content-Type','text/html')
+	msg.set_payload(message)
+	
+	server = smtplib.SMTP(gl.config.smtp_host, gl.config.smtp_port)
+	server.ehlo()
+	server.starttls()
+	server.login(gl.config.smtp_user, gl.config.smtp_password)
+	server.sendmail(msg['From'], msg['To'], msg.as_string().encode('utf-8'))
+	server.quit()
+	
 def main(user):
 	# get air pollution data
 	p1, p2, timestamp, location = get_air_data(user['station_id'])	
@@ -88,8 +101,8 @@ def main(user):
 	# get previus air data from the csv file for the current user
 	last_p1, last_p2, last_alert_date = get_last_row(csv_path, p1, p2)
 
-	p2 = 127 # current value of pm2.5 comment used for tests	
-	last_p2 = 12 # previous value of pm2.5 comment used for tests
+	#p2 = 127 # current value of pm2.5 comment used for tests	
+	#last_p2 = 12 # previous value of pm2.5 comment used for tests
 	
 	# check if there is air pollution
 	if p2 > gl.config.alert_value:	
