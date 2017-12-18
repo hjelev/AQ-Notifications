@@ -30,7 +30,7 @@ AQI = [
 		},
 	]
 
-def alert_message(p1, p2, station_id, location):
+def alert_message(p1, p2, sensor_id, location):
 	#get air pollutioin health message
 	if p2 < 50:
 		apl = AQI[0]['apl']
@@ -68,14 +68,14 @@ def alert_message(p1, p2, station_id, location):
 					today = datetime.today().strftime("%Y-%m-%d %H:%M"),
 					p1 = p1,
 					p2 = p2,
-					stationid = station_id,
+					stationid = sensor_id,
 					location = location,
 					)
 
 	return message
 
 def ok_message(ok_value, p1, p2, last_p1, last_p2, 
-				station_id, last_alert_date, location):
+				sensor_id, last_alert_date, location):
 	#read the html template 
 	with open('templates/clear_air.html', 'r') as templatefile:
 		message = templatefile.readlines()
@@ -86,7 +86,7 @@ def ok_message(ok_value, p1, p2, last_p1, last_p2,
 					today = datetime.today().strftime("%Y-%m-%d %H:%M"),
 					p1 = p1,
 					p2 = p2,
-					stationid = station_id,
+					stationid = sensor_id,
 					lastpolutiondate = last_alert_date,
 					last_p1 = last_p1,
 					last_p2 = last_p2,

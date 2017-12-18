@@ -8,9 +8,9 @@ import config as gl
 from alerts import *
 
 # read air data from json api and return average values
-def get_air_data(station_id):
+def get_air_data(sensor_id):
 	p1, p2 = [], []
-	with urllib.request.urlopen(api_url + station_id + "/") as url:
+	with urllib.request.urlopen(api_url + sensor_id + "/") as url:
 		data = json.loads(url.read().decode())
 		#we need this as there are multiple sensor readings in the api response
 		for results in data:			
@@ -87,12 +87,12 @@ def send_email(message, subject, recipient):
 	
 def main(user):
 	# get air pollution data
-	p1, p2, timestamp, location = get_air_data(user['station_id'])	
+	p1, p2, timestamp, location = get_air_data(user['sensor_id'])	
 	# Build the path to the csv file with previous air data
 	csv_path = os.path.join(os.path.dirname(os.path.realpath(__file__)) ,
 				gl.config.csv_data_folder ,
 				"air_data_{}-{}.csv".format(
-						user['station_id'],
+						user['sensor_id'],
 						user['email'].replace('@', '-')
 					)
 				)
@@ -115,7 +115,7 @@ def main(user):
 		# - send polution alert		
 		elif int(last_p2) < gl.config.ok_value:
 			# sends email notifications
-			send_email(alert_message(p1, p2, user['station_id'], location),
+			send_email(alert_message(p1, p2, user['sensor_id'], location),
 							"Air Pollution Alert!",
 							user['email']
 							)
@@ -129,7 +129,7 @@ def main(user):
 	elif p2 < gl.config.ok_value and int(last_p2) > gl.config.ok_value:
 		send_email(ok_message(gl.config.ok_value, p1, p2,
 									last_p1, last_p2,
-									user['station_id'],
+									user['sensor_id'],
 									last_alert_date,
 									location
 									),
@@ -145,7 +145,7 @@ def main(user):
 if __name__ == '__main__':
 	enable_logging()
 	for user in gl.config.email_list:
-		#main(user)
+		main(user)
 		try:
 			main(user)
 		except Exception as e:
