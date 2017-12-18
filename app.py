@@ -1,4 +1,4 @@
-import urllib.request, json, csv, os , logging, smtplib, email.message
+import urllib.request, json, csv, os , logging, smtplib, email.message, time
 from collections import deque
 from datetime import datetime
 from functools import reduce
@@ -149,6 +149,8 @@ if __name__ == '__main__':
 		#main(user)
 		try:
 			main(user)
+			# wait 1 second to avoid api errors
+			time.sleep(1)
 		except Exception as e:
 			print("Problem with user: ", user['email'],e)
 			logging.error("Problem with user: {} {}".format(user['email'], e))
