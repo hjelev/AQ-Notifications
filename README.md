@@ -8,11 +8,20 @@ The script will create a csv file for each airpolution sensor you track and use 
 
 # Installation
 
-To install the script clone this reporitory, fill the configuration vairables in config.py.example and rename it to config.py .
+To install the script:
+1. Clone the reporitory
+2. Open config.py.example and configure your data, then save it as config.py
+3. Set a cron job to execute app.py each hour or more often depending on your needs 
+4. Test the cron to make sure the script works properly
+
+Cronjob Example
+
+#run once each hour
+1 */1 * * * /usr/bin/python3 /path/to/app.py
+
+
 
 To get your sensor_id (this is the air quality sensor for your location) go to http://maps.luftdaten.info,
 navigate to your location, click on the colored hexagon that is located near you and get Station ID.
 
-Finally set a cron job to execute app.py each hour or more often depending on your needs:
-
-1 */1 * * * /usr/bin/python3 /path/to/app.py
+Finally 
