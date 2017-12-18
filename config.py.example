@@ -5,6 +5,7 @@ class config :
 	ok_value = 50
 	csv_data_folder = "air_data"
 	logs_file_name = "air_check.log"
+	api_url = "http://api.luftdaten.info/v1/sensor/"
 	
 	# configure smtp server for sending mail
 	smtp_host = 'smtp.gmail.com'
@@ -15,6 +16,6 @@ class config :
 	#Notification recipients
 	email_list = [
 					{"email":"username@gmail.com", "station_id":"5690" },
-					{"email":"username@gmail.com", "station_id":"5690" },
-					{"email":"username@gmail.com", "station_id":"6771" },
+					{"email":"username@hotmail.com", "station_id":"5690" },
+					{"email":"username@yahoo.com", "station_id":"6771" },
 				]

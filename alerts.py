@@ -1,6 +1,5 @@
 from datetime import datetime
 
-api_url = "http://api.luftdaten.info/v1/sensor/"
 air_map_url = "http://maps.luftdaten.info/#13/"
 
 AQI = [
@@ -80,7 +79,7 @@ def ok_message(ok_value, p1, p2, last_p1, last_p2,
 	with open('templates/clear_air.html', 'r') as templatefile:
 		message = templatefile.readlines()
 		
-	#populate html template				
+	#populate the html template				
 	message = "".join(message).format(map_url = air_map_url + location.replace(",", "/"), 
 					ok_value = ok_value,
 					today = datetime.today().strftime("%Y-%m-%d %H:%M"),
