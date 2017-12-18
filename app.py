@@ -88,8 +88,8 @@ def main(user):
 	# get previus air data from the csv file for the current user
 	last_p1, last_p2, last_alert_date = get_last_row(csv_path, p1, p2)
 
-	#p2 = 130 # current value of pm2.5 comment used for tests	
-	#last_p2 = 22 # previous value of pm2.5 comment used for tests
+	p2 = 127 # current value of pm2.5 comment used for tests	
+	last_p2 = 12 # previous value of pm2.5 comment used for tests
 	
 	# check if there is air pollution
 	if p2 > gl.config.alert_value:	
@@ -124,7 +124,7 @@ def main(user):
 								user['email']
 								)
 		logging.info("- Clear Air Alert sent to {} ".format(user['email'])
-						+"PM10= {} PM2.5={}".format(p1, p2,))
+						+ "PM10= {} PM2.5={}".format(p1, p2,))
 		# write new clear air record to the csv file
 		write_to_csv(p1, p2, timestamp, csv_path)
 	return
@@ -138,3 +138,4 @@ if __name__ == '__main__':
 		except Exception as e:
 			print("Problem with user: ", user['email'],e)
 			logging.error("Problem with user: {} {}".format(user['email'], e))
+			send_email(str(e),"Problem with user: {}".format(user['email']),"jeleff@gmail.com")

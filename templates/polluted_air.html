@@ -1,0 +1,18 @@
+		<h1>Air is {apl}!</h1><br>
+		Health Implications: {health_implications}<br><br>
+		Cautionary Statement: {cautionary_statement}<br><br>
+		Alert Date {today} <br>
+		<p>PM10 = {p1} µg/m³ <br> PM2.5 = {p2} µg/m³ </p>
+		<img src="https://api.luftdaten.info/grafana/render/dashboard-solo/db/single-sensor-view?orgId=1&panelId=2&width=300&height=200&tz=UTC%2B02%3A00&var-node={stationid}">
+		<br>
+		<small>
+		PM10 -  fine particles with a diameter of 10 μm or less
+		<br>
+		PM2.5 -  fine particles with a diameter of 2.5 μm or less
+		</small>
+		<br><br>
+		Sensor Location<br>
+		<a href="{map_url}">
+		<img src="https://maps.googleapis.com/maps/api/staticmap?center={location}&zoom=12&size=300x200&maptype=roadmap&markers=color:blue%7Clabel:S%7C{location}&markers=color:red%7C&key=AIzaSyBmdDFqNyjLOUUwMzXmskur36QdbF4oPao">
+		</a>
+		<br>
