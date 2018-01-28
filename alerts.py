@@ -1,3 +1,5 @@
+#alerts.py
+
 from datetime import datetime
 
 air_map_url = "http://maps.luftdaten.info/#13/"
@@ -57,7 +59,7 @@ def alert_message(p1, p2, sensor_id, location):
 		cautionary_statement = AQI[5]['cautionary_statement']
 	
 	#read the html template 
-	with open('templates/polluted_air.html', 'r') as templatefile:
+	with open('/home/pi/scripts/air_check/templates/polluted_air.html', 'r') as templatefile:
 		message = templatefile.readlines()
 	#populate html template		
 	message = "".join(message).format(	apl = apl,
@@ -76,7 +78,7 @@ def alert_message(p1, p2, sensor_id, location):
 def ok_message(ok_value, p1, p2, last_p1, last_p2, 
 				sensor_id, last_alert_date, location):
 	#read the html template 
-	with open('templates/clear_air.html', 'r') as templatefile:
+	with open('/home/pi/scripts/air_check/templates/clear_air.html', 'r') as templatefile:
 		message = templatefile.readlines()
 		
 	#populate the html template				

@@ -1,3 +1,7 @@
+"""
+Python script to check air pollution data and sent email alerts.
+"""
+
 import urllib.request, json, csv, os , logging, smtplib, email.message, time
 from collections import deque
 from datetime import datetime
@@ -27,7 +31,9 @@ def get_air_data(sensor_id):
 		average_p1 = int(reduce(lambda x, y: x + y / float(len(p1)), p1, 0))
 		average_p2 = int(reduce(lambda x, y: x + y / float(len(p2)), p2, 0))
 	except:
-		raise RuntimeError('Problem with sensor ID: {}'.format(sensor_id))
+		pass
+		average_p1, average_p2 = 0, 0
+		#raise RuntimeError('Problem with sensor ID: {}'.format(sensor_id))
 	return average_p1, average_p2, timestamp, location
 
 # save sensor data to a csv file
@@ -153,5 +159,5 @@ if __name__ == '__main__':
 			time.sleep(1)
 		except Exception as e:
 			print("Problem with user: ", user['email'],e)
-			logging.error("Problem with user: {} {}".format(user['email'], e))
-			send_email(str(e),"Problem with user: {}".format(user['email']),gl.config.email_list[0]['email'])
+			#logging.error("Problem with user: {} {}".format(user['email'], e))
+			#send_email(str(e),"Problem with user: {}".format(user['email']),gl.config.email_list[0]['email'])
